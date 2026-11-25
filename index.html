@@ -18,7 +18,7 @@ const EINSTELLUNGEN = {
   titel: "Unser Jahr in 24 Erinnerungen",
   untertitel: "Für dich – jeden Tag ein Stück von uns.",
   // true = alle Türchen sofort offen (zum Testen). VOR DEM VERSCHENKEN auf false setzen!
-  vorschau: false,
+  vorschau: true,
 };
 
 /* Pro Tag:
@@ -176,7 +176,7 @@ const TUERCHEN = [
     background: #fff; padding: .7rem .7rem 0; box-shadow: var(--schatten);
     transform: rotate(-1.5deg); margin: .4rem auto 1.3rem; max-width: 360px;
   }
-  .polaroid img { width: 100%; display: block; aspect-ratio: 1; object-fit: cover; background: var(--papier-dunkel); }
+  .polaroid img { width: 100%; display: block; max-height: 58vh; object-fit: contain; background: var(--papier-dunkel); }
   .polaroid .leer {
     width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
     background: var(--papier-dunkel); color: var(--gold); font-size: 3rem;
