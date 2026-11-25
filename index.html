@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unser Adventskalender</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+
+<script>
+/* =====================================================================
+   ✏️  HIER ANPASSEN – alles andere kannst du in Ruhe lassen
+   ===================================================================== */
+const EINSTELLUNGEN = {
+  jahr: 2026,
+  titel: "Unser Jahr in 24 Erinnerungen",
+  untertitel: "Für dich – jeden Tag ein Stück von uns.",
+  // true = alle Türchen sofort offen (zum Testen). VOR DEM VERSCHENKEN auf false setzen!
+  vorschau: false,
+};
+
+/* Pro Tag:
+   foto  – Dateiname im Ordner "fotos" (z. B. "01.jpg"), oder "" für ohne Foto
+   datum – wann es war (frei formulierbar, z. B. "Sommer 2021")
+   ort   – wo es war
+   titel – kurze Überschrift (steht handschriftlich unter dem Foto)
+   text  – deine Worte dazu
+   song  – optional: Link zu Spotify/YouTube, sonst ""                     */
+const TUERCHEN = [
+  { foto: "01.jpg", datum: "Juli 2018", ort: "Am See", titel: "Oben auf dem Gerüst", text: "Ganz am Anfang von uns. Statt etwas Großes zu planen, sind wir einfach auf den Spielplatz, haben uns oben aufs Gerüst gesetzt und gequatscht. Es war so schön, mich mit dir zu unterhalten – und das ist bis heute so geblieben.", song: "" },
+  { foto: "02.jpg", datum: "31. Juli 2018, ein Dienstag kurz vor 22 Uhr", ort: "", titel: "Viel zu spät – und genau richtig", text: "Wo genau wir da waren? Ehrlich gesagt keine Ahnung mehr – vielleicht weißt du es noch? Ich weiß nur: Es war mitten in der Woche und eigentlich viel zu spät für mich. Aber egal wie spät es ist – mit dir zusammen ist es einfach immer schön.", song: "" },
+  { foto: "03.jpg", datum: "August 2018", ort: "Unsere alte Wohnung", titel: "Frühstück für Riesen", text: "Gemeinsames Frühstück in unserer alten Wohnung. Und schau dir mal die grünen Schüsseln an – das waren noch Portionen! Ich liebe diese ganz normalen Morgen mit dir.", song: "" },
+  { foto: "04.jpg", datum: "August 2018", ort: "Völklingen", titel: "Autokino", text: "Autokino in Völklingen! Wenn ich mich richtig erinnere, lief „The Place Beyond the Pines“. Mal ehrlich: Erinnerst du dich noch an den Plot? Ich hab jedenfalls nicht nur auf die Leinwand geschaut.", song: "" },
+  { foto: "05.jpg", datum: "5. Dezember 2025", ort: "", titel: "DER Tag", text: "Was soll es an diesem Tag auch für ein anderes Bild geben? DER Tag in unserem gemeinsamen Leben – geprägt von unendlicher Liebe. Ich würde ihn jederzeit wieder genau so erleben.", song: "" },
+  { foto: "06.jpg", datum: "Silvester 2018", ort: "", titel: "Drei kleine Teufelchen", text: "Die drei kleinen Teufelchen vor dem Weihnachtsbaum. Wer da wohl am meisten Unsinn im Kopf hatte?", song: "" },
+  { foto: "07.jpg", datum: "Silvester 2018", ort: "", titel: "… und noch eins!", text: "… und noch ein weiterer Teufel ist mit dabei! Jetzt ist die Bande komplett.", song: "" },
+  { foto: "08.jpg", datum: "", ort: "", titel: "Ein schöner Abend", text: "Das war doch ein schöner Abend … erinnerst du dich? Ich schon. Und ich muss jedes Mal lächeln, wenn ich dieses Foto sehe.", song: "" },
+  { foto: "09.jpg", datum: "April 2019", ort: "", titel: "Sonne zwischen den Schauern", text: "Ein Tag mit unheimlich wechselhaftem Wetter – hier ausnahmsweise eine Einstellung ohne Regen. Danke für dieses wundervolle Geschenk! :-*", song: "" },
+  { foto: "10.jpg", datum: "Juni 2019", ort: "", titel: "Wandertag mit Andy & Co.", text: "Auch beim Wandern stets gut gelaunt! Das war ein richtig schöner Tag mit Andy & Co. – und mit dir an meiner Seite ist jeder Weg ein bisschen leichter.", song: "" },
+  { foto: "11.jpg", datum: "", ort: "", titel: "Das Tanzen!", text: "Das Tanzen! Leider hat unser Tanzlehrer nicht so ganz den richtigen Rhythmus gefunden, um uns mitzureißen … Aber ehrlich: Mit dir tanze ich auch ohne Takt.", song: "" },
+  { foto: "12.jpg", datum: "", ort: "", titel: "Unsere Insel", text: "Zusammen am Meer, auf unserer „gemeinsamen Insel“. Genau so stelle ich mir unser Leben vor. Was braucht es auch sonst?", song: "" },
+  { foto: "13.jpg", datum: "", ort: "", titel: "Auf zum Hinkelstein", text: "Mit den E-Bikes einen steilen Abhang hinauf und dann bis zum Hinkelstein – das war echt spaßig! Obelix wäre stolz auf uns.", song: "" },
+  { foto: "14.jpg", datum: "", ort: "", titel: "Die hellste Perle", text: "Die Kirche mit den vielen Muscheln – es war so schön dort. Aber die hellste Perle von allen bist du.", song: "" },
+  { foto: "15.jpg", datum: "", ort: "", titel: "Wo sind wir denn hier?", text: "Wo sind wir denn hier gelandet? Mit dir weiß ich nicht immer, wo die Reise hingeht – aber ich weiß, dass ich mitkomme.", song: "" },
+  { foto: "16.jpg", datum: "", ort: "", titel: "Das Überraschungsteufelchen", text: "Das kleine Überraschungsteufelchen in ihrem Element!", song: "" },
+  { foto: "17.jpg", datum: "", ort: "", titel: "Kleiner Bär", text: "So ein kleiner, süßer Bär …", song: "" },
+  { foto: "18.jpg", datum: "", ort: "", titel: "Das Engelchen", text: "Das Engelchen ist wieder da! :-)", song: "" },
+  { foto: "19.jpg", datum: "", ort: "", titel: "Wauffer & Lieblingsmensch", text: "Der kleine Wauffer und mein Lieblingsmensch – zwei auf einem Bild, bei denen mir das Herz aufgeht.", song: "" },
+  { foto: "20.jpg", datum: "Mai 2024", ort: "", titel: "Crazy Steine", text: "Was das für crazy Gesteinsformationen waren – unfassbar! Ich staune heute noch.", song: "" },
+  { foto: "21.jpg", datum: "Juni 2025", ort: "", titel: "Hochzeit zu dritt", text: "Die Hochzeit, die wir „zu dritt“ erleben durften. :-)", song: "" },
+  { foto: "22.jpg", datum: "Juli 2025", ort: "", titel: "Anubis wacht", text: "Anubis wacht über uns! Besser in ein Horrorhaus gehen als Horror zu Haus. Oder so. :-)", song: "" },
+  { foto: "23.jpg", datum: "Januar 2024", ort: "", titel: "Unser Märchen", text: "Diese Zipfeldächer sehen einfach so schön aus – wie in einem Märchen. Unserem Märchen.", song: "" },
+  { foto: "24.jpg", datum: "November 2026", ort: "", titel: "Unsere Familie", text: "Unsere Familie vor dem Weihnachtsbaum. Es ist so schön, diese Zeit mit dir erleben zu dürfen. Ich bin dir so dankbar für all das, was du mir jeden Tag schenkst.\n\nIch liebe dich.", song: "" },
+];
+/* ===================================================================== */
+</script>
+
+<style>
+  :root {
+    --papier: #f5ecdc;
+    --papier-dunkel: #e9dcc4;
+    --tinte: #3a2a22;
+    --rot: #9e2b25;
+    --gruen: #2f4a3a;
+    --gold: #b88a3e;
+    --schatten: 0 1px 2px rgba(58,42,34,.12), 0 6px 18px rgba(58,42,34,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "Fraunces", Georgia, serif;
+    color: var(--tinte);
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(184,138,62,.18), transparent 55%),
+      radial-gradient(ellipse at 90% 100%, rgba(47,74,58,.16), transparent 50%),
+      var(--papier);
+    overflow-x: hidden;
+  }
+  #schnee { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+  header {
+    position: relative; z-index: 1;
+    text-align: center; padding: 3.5rem 1.25rem 1.5rem;
+  }
+  header .stern { color: var(--gold); font-size: 1.4rem; letter-spacing: .6em; }
+  header h1 {
+    font-weight: 600; font-size: clamp(1.9rem, 6vw, 3.2rem);
+    line-height: 1.1; margin: .6rem 0 .5rem; color: var(--rot);
+  }
+  header p { font-family: "Caveat", cursive; font-size: clamp(1.3rem, 3.5vw, 1.7rem); color: var(--gruen); }
+
+  main {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto; padding: 1rem 1rem 4rem;
+    display: grid; gap: .9rem;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-auto-rows: 120px; grid-auto-flow: dense;
+  }
+  .tuer {
+    position: relative; border: none; cursor: pointer;
+    border-radius: 6px; box-shadow: var(--schatten);
+    font-family: "Fraunces", Georgia, serif; color: var(--papier);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .25s ease, box-shadow .25s ease;
+    overflow: hidden;
+  }
+  .tuer::before {
+    content: ""; position: absolute; inset: 7px;
+    border: 1px dashed rgba(245,236,220,.45); border-radius: 3px;
+  }
+  .tuer .zahl { font-size: 2.4rem; font-weight: 600; position: relative; }
+  .tuer.gross { grid-column: span 2; grid-row: span 2; }
+  .tuer.gross .zahl { font-size: 4.2rem; }
+  .tuer.breit { grid-column: span 2; }
+  .tuer.f0 { background: var(--rot); }
+  .tuer.f1 { background: var(--gruen); }
+  .tuer.f2 { background: #6e3b2c; }
+  .tuer.f3 { background: #3d5a63; }
+  .tuer:hover:not(.zu) { transform: translateY(-3px) rotate(-.6deg); }
+  .tuer:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  .tuer.zu { filter: saturate(.35) brightness(1.05); opacity: .72; cursor: default; }
+  .tuer.offen {
+    background-size: cover; background-position: center;
+    color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.6);
+  }
+  .tuer.offen::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(30,20,15,.55), rgba(30,20,15,.1));
+  }
+  .tuer.offen .zahl { z-index: 1; }
+  .tuer.offen::before { border-color: rgba(255,255,255,.6); z-index: 1; }
+  .tuer.heute { box-shadow: 0 0 0 3px var(--gold), var(--schatten); }
+  .tuer.heute .zahl::after {
+    content: "heute"; display: block; font-family: "Caveat", cursive;
+    font-size: 1.1rem; font-weight: 500; text-align: center; margin-top: -.3rem;
+  }
+  .wackeln { animation: wackeln .45s ease; }
+  @keyframes wackeln {
+    20% { transform: rotate(-3deg); } 40% { transform: rotate(3deg); }
+    60% { transform: rotate(-2deg); } 80% { transform: rotate(1deg); }
+  }
+
+  #hinweis {
+    position: fixed; left: 50%; bottom: 1.5rem; z-index: 5;
+    transform: translate(-50%, 20px); opacity: 0;
+    background: var(--tinte); color: var(--papier);
+    font-family: "Caveat", cursive; font-size: 1.4rem;
+    padding: .5rem 1.2rem; border-radius: 999px;
+    transition: opacity .25s, transform .25s; pointer-events: none;
+  }
+  #hinweis.sichtbar { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Erinnerung (Popup) */
+  #popup {
+    position: fixed; inset: 0; z-index: 10;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(40,28,22,.6); backdrop-filter: blur(3px);
+    padding: 1rem; overflow-y: auto;
+  }
+  #popup.sichtbar { display: flex; }
+  .karte {
+    background: var(--papier); max-width: 460px; width: 100%;
+    border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    padding: 1.6rem 1.4rem 1.4rem; position: relative; margin: auto;
+    animation: auf .4s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes auf { from { transform: scale(.85) rotate(-3deg); opacity: 0; } }
+  .schliessen {
+    position: absolute; top: .4rem; right: .6rem; background: none; border: none;
+    font-size: 1.8rem; color: var(--tinte); cursor: pointer; line-height: 1; padding: .3rem;
+  }
+  .polaroid {
+    background: #fff; padding: .7rem .7rem 0; box-shadow: var(--schatten);
+    transform: rotate(-1.5deg); margin: .4rem auto 1.3rem; max-width: 360px;
+  }
+  .polaroid img { width: 100%; display: block; aspect-ratio: 1; object-fit: cover; background: var(--papier-dunkel); }
+  .polaroid .leer {
+    width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    background: var(--papier-dunkel); color: var(--gold); font-size: 3rem;
+  }
+  .polaroid figcaption {
+    font-family: "Caveat", cursive; font-size: 1.7rem; text-align: center;
+    padding: .5rem .3rem .7rem; color: var(--tinte); line-height: 1.15;
+  }
+  .meta {
+    text-align: center; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gruen); margin-bottom: .9rem;
+  }
+  .text { font-size: 1.05rem; line-height: 1.6; white-space: pre-line; }
+  .song {
+    display: inline-block; margin-top: 1.1rem; color: var(--rot);
+    font-family: "Caveat", cursive; font-size: 1.4rem; text-decoration: none;
+  }
+  .song:hover { text-decoration: underline; }
+  .tag-nr { position: absolute; top: .9rem; left: 1.1rem; font-family: "Caveat", cursive; font-size: 1.3rem; color: var(--gold); }
+
+  .vorschau-band {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+    background: var(--gold); color: #fff; text-align: center; font-size: .8rem; padding: .3rem;
+  }
+  footer { position: relative; z-index: 1; text-align: center; padding: 0 1rem 2.5rem; font-family: "Caveat", cursive; font-size: 1.3rem; color: var(--gruen); }
+
+  @media (max-width: 520px) {
+    main { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 95px; gap: .6rem; }
+    .tuer .zahl { font-size: 1.8rem; }
+    .tuer.gross .zahl { font-size: 3rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<canvas id="schnee" aria-hidden="true"></canvas>
+
+<header>
+  <div class="stern">✦ ✦ ✦</div>
+  <h1 id="titel"></h1>
+  <p id="untertitel"></p>
+</header>
+
+<main id="kalender" aria-label="Adventskalender"></main>
+<footer id="fuss"></footer>
+<div id="hinweis" role="status"></div>
+
+<div id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-titel">
+  <div class="karte">
+    <span class="tag-nr" id="popup-tag"></span>
+    <button class="schliessen" aria-label="Schließen">×</button>
+    <figure class="polaroid">
+      <div id="popup-bild"></div>
+      <figcaption id="popup-titel"></figcaption>
+    </figure>
+    <div class="meta" id="popup-meta"></div>
+    <div class="text" id="popup-text"></div>
+    <div style="text-align:center"><a class="song" id="popup-song" target="_blank" rel="noopener"></a></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const E = EINSTELLUNGEN;
+  const SPEICHER = "advent-" + E.jahr;
+  const $ = id => document.getElementById(id);
+
+  $("titel").textContent = E.titel;
+  $("untertitel").textContent = E.untertitel;
+  if (E.vorschau) {
+    const band = document.createElement("div");
+    band.className = "vorschau-band";
+    band.textContent = "Vorschau-Modus: alle Türchen offen – vor dem Verschenken ausschalten";
+    document.body.appendChild(band);
+  }
+
+  // Wie viele Türchen dürfen heute auf?
+  function freigegeben() {
+    if (E.vorschau) return 24;
+    const h = new Date();
+    if (h.getFullYear() > E.jahr) return 24;
+    if (h.getFullYear() < E.jahr || h.getMonth() < 11) return 0;
+    return Math.min(h.getDate(), 24);
+  }
+  function heute() {
+    const h = new Date();
+    return (h.getFullYear() === E.jahr && h.getMonth() === 11) ? h.getDate() : 0;
+  }
+  function geoeffnet() {
+    try { return new Set(JSON.parse(localStorage.getItem(SPEICHER) || "[]")); }
+    catch (e) { return new Set(); }
+  }
+  function merken(tag) {
+    try { const s = geoeffnet(); s.add(tag); localStorage.setItem(SPEICHER, JSON.stringify([...s])); }
+    catch (e) {}
+  }
+  const fotoPfad = f => f ? "fotos/" + encodeURI(f) : "";
+
+  // Feste, "zufällig" wirkende Reihenfolge und Größen
+  const reihenfolge = [7,19,3,24,12,1,16,9,22,5,14,20,2,11,17,6,23,10,4,15,21,8,13,18];
+  const gross = new Set([24, 6, 13]);
+  const breit = new Set([1, 18, 21]);
+
+  const kal = $("kalender");
+  reihenfolge.forEach((tag, i) => {
+    const b = document.createElement("button");
+    b.className = "tuer f" + (i % 4) + (gross.has(tag) ? " gross" : breit.has(tag) ? " breit" : "");
+    b.dataset.tag = tag;
+    b.innerHTML = '<span class="zahl">' + tag + "</span>";
+    b.addEventListener("click", () => klick(tag, b));
+    kal.appendChild(b);
+  });
+
+  function aktualisieren() {
+    const frei = freigegeben(), offen = geoeffnet(), h = heute();
+    kal.querySelectorAll(".tuer").forEach(b => {
+      const tag = +b.dataset.tag;
+      const darf = tag <= frei;
+      b.classList.toggle("zu", !darf);
+      b.classList.toggle("heute", darf && tag === h && !offen.has(tag));
+      b.setAttribute("aria-label", "Türchen " + tag + (darf ? "" : " (noch verschlossen)"));
+      const t = TUERCHEN[tag - 1];
+      if (darf && offen.has(tag) && t && t.foto) {
+        b.classList.add("offen");
+        b.style.backgroundImage = 'url("' + fotoPfad(t.foto) + '")';
+      }
+    });
+    const n = offen.size;
+    $("fuss").textContent = n === 0 ? "Fang beim 1. Dezember an ♥"
+      : n >= 24 ? "Alle 24 Erinnerungen gefunden. Frohe Weihnachten ♥"
+      : n + " von 24 Erinnerungen geöffnet";
+  }
+
+  let hinweisTimer;
+  function hinweis(text) {
+    const el = $("hinweis");
+    el.textContent = text; el.classList.add("sichtbar");
+    clearTimeout(hinweisTimer);
+    hinweisTimer = setTimeout(() => el.classList.remove("sichtbar"), 2200);
+  }
+
+  function klick(tag, b) {
+    if (tag > freigegeben()) {
+      b.classList.remove("wackeln"); void b.offsetWidth; b.classList.add("wackeln");
+      const h = new Date();
+      let rest = null;
+      if (h.getFullYear() === E.jahr && h.getMonth() === 11) rest = tag - h.getDate();
+      else if (h.getFullYear() === E.jahr) {
+        rest = Math.ceil((new Date(E.jahr, 11, tag) - new Date(h.getFullYear(), h.getMonth(), h.getDate())) / 864e5);
+      }
+      hinweis(rest === 1 ? "Noch 1 Tag Geduld 🎄" : rest ? "Noch " + rest + " Tage Geduld 🎄" : "Noch nicht 🎄");
+      return;
+    }
+    merken(tag);
+    zeigen(tag);
+    aktualisieren();
+  }
+
+  let zuletzt = null;
+  function zeigen(tag) {
+    const t = TUERCHEN[tag - 1] || {};
+    $("popup-tag").textContent = tag + ". Dezember";
+    $("popup-titel").textContent = t.titel || "";
+    const bild = $("popup-bild");
+    bild.innerHTML = "";
+    if (t.foto) {
+      const img = new Image();
+      img.alt = t.titel || ("Erinnerung " + tag);
+      img.src = fotoPfad(t.foto);
+      img.onerror = () => { bild.innerHTML = '<div class="leer">♥</div>'; };
+      bild.appendChild(img);
+    } else {
+      bild.innerHTML = '<div class="leer">♥</div>';
+    }
+    $("popup-meta").textContent = [t.datum, t.ort].filter(Boolean).join("  ·  ");
+    $("popup-text").textContent = t.text || "";
+    const s = $("popup-song");
+    if (t.song) { s.href = t.song; s.textContent = "♪ Unser Lied dazu"; s.style.display = ""; }
+    else s.style.display = "none";
+    zuletzt = document.activeElement;
+    $("popup").classList.add("sichtbar");
+    document.querySelector(".schliessen").focus();
+  }
+  function schliessen() {
+    $("popup").classList.remove("sichtbar");
+    if (zuletzt) zuletzt.focus();
+  }
+  document.querySelector(".schliessen").addEventListener("click", schliessen);
+  $("popup").addEventListener("click", e => { if (e.target.id === "popup") schliessen(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") schliessen(); });
+
+  aktualisieren();
+
+  // Leichter Schneefall
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const c = $("schnee"), ctx = c.getContext("2d");
+    let flocken = [];
+    function groesse() {
+      c.width = innerWidth; c.height = innerHeight;
+      flocken = Array.from({ length: Math.round(innerWidth / 18) }, () => ({
+        x: Math.random() * c.width, y: Math.random() * c.height,
+        r: Math.random() * 2.2 + .6, v: Math.random() * .5 + .25, d: Math.random() * Math.PI * 2
+      }));
+    }
+    function malen() {
+      ctx.clearRect(0, 0, c.width, c.height);
+      ctx.fillStyle = "rgba(184,138,62,.35)";
+      for (const f of flocken) {
+        f.y += f.v; f.d += .01; f.x += Math.sin(f.d) * .3;
+        if (f.y > c.height + 5) { f.y = -5; f.x = Math.random() * c.width; }
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+      }
+      requestAnimationFrame(malen);
+    }
+    addEventListener("resize", groesse);
+    groesse(); malen();
+  }
+})();
+</script>
+</body>
+</html>
